@@ -1,0 +1,28 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}Редагування: {{ post.title }} - Блог{% endblock %}
+
+{% block content %}
+    <div class="post-item">
+        <h1>Редагування статті</h1>
+        
+        <form method="post">
+            {% csrf_token %}
+            
+            <div style="margin-bottom: 20px;">
+                <label for="title" style="display: block; margin-bottom: 8px; font-weight: 500;">Заголовок:</label>
+                <input type="text" id="title" name="title" value="{{ post.title }}" style="width: 100%; padding: 12px; border-radius: 5px; border: 1px solid #ddd;" required>
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+                <label for="content" style="display: block; margin-bottom: 8px; font-weight: 500;">Вміст:</label>
+                <textarea id="content" name="content" rows="15" style="width: 100%; padding: 12px; border-radius: 5px; border: 1px solid #ddd;" required>{{ post.content }}</textarea>
+            </div>
+            
+            <div>
+                <button type="submit" class="btn">Зберегти зміни</button>
+                <a href="{% url 'post_detail' post.slug %}" class="btn" style="background: #757575;">Скасувати</a>
+            </div>
+        </form>
+    </div>
+{% endblock %}

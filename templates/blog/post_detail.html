@@ -1,0 +1,68 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}{{ post.title }} - Блог{% endblock %}
+
+{% block content %}
+    <article>
+        <div class="post-detail-header">
+            <h1>{{ post.title }}</h1>
+            <div class="post-meta">
+                <span>Автор: {{ post.author.username }}</span> | 
+                <span>Категорія: <a href="{% url 'category_posts' post.category.slug %}">{{ post.category.name }}</a></span> | 
+                <span>Опубліковано: {{ post.created_at|date:"d.m.Y H:i" }}</span>
+            </div>
+            
+            {% if user == post.author or user.is_staff %}
+                <div class="post-actions">
+                    <a href="{% url 'edit_post' post.slug %}" class="btn">Редагувати</a>
+                    <a href="{% url 'delete_post' post.slug %}" class="btn btn-danger" 
+                       onclick="return confirm('Ви впевнені, що хочете видалити цю статтю?')">Видалити</a>
+                </div>
+            {% endif %}
+        </div>
+        
+        <div class="post-content">
+            {{ post.content|linebreaks }}
+        </div>
+    </article>
+    
+    <section class="comments-section">
+        <h2>Коментарі ({{ comments.count }})</h2>
+        
+        {% for comment in comments %}
+            <div class="comment">
+                <div class="comment-header">
+                    <strong>{{ comment.author.username }}</strong>
+                    <span>{{ comment.created_at|date:"d.m.Y H:i" }}</span>
+                    
+                    {% if user == comment.author or user.is_staff %}
+                        <a href="{% url 'delete_comment' comment.id %}" class="btn btn-danger btn-small" 
+                           onclick="return confirm('Ви впевнені, що хочете видалити цей коментар?')">
+                            Видалити
+                        </a>
+                    {% endif %}
+                </div>
+                <div class="comment-content">
+                    {{ comment.content|linebreaks }}
+                </div>
+            </div>
+        {% empty %}
+            <p>Коментарів поки що немає.</p>
+        {% endfor %}
+        
+        {% if user.is_authenticated %}
+            <div class="comment-form">
+                <h3>Додати коментар</h3>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <textarea name="content" rows="4" style="width: 100%; padding: 12px; border-radius: 5px; border: 1px solid #ddd;" required></textarea>
+                    </div>
+                    <button type="submit" class="btn" style="margin-top: 10px;">Надіслати</button>
+                </form>
+            </div>
+        {% else %}
+            <p><a href="{% url 'login' %}">Увійдіть</a>, щоб залишити коментар.</p>
+        {% endif %}
+    </section>
+{% endblock %}

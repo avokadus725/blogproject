@@ -1,0 +1,49 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}{{ category.name }} - Блог{% endblock %}
+
+{% block content %}
+    <h1>Категорія: {{ category.name }}</h1>
+    <div class="sort-links">
+        <p>Статей у категорії: <strong>{{ posts.paginator.count }}</strong></p>
+    </div>
+    
+    {% for post in posts %}
+        <article class="post-item">
+            <h2><a href="{% url 'post_detail' post.slug %}">{{ post.title }}</a></h2>
+            <div class="post-meta">
+                <span>Автор: {{ post.author.username }}</span> | 
+                <span>Дата: {{ post.created_at|date:"d.m.Y H:i" }}</span> | 
+                <span>Коментарів: {{ post.comments.count }}</span>
+            </div>
+            
+            <div class="post-excerpt">
+                {% if post.excerpt %}
+                    {{ post.excerpt }}
+                {% else %}
+                    {{ post.content|truncatewords:30 }}
+                {% endif %}
+            </div>
+            
+            <a href="{% url 'post_detail' post.slug %}" class="btn">Читати далі</a>
+        </article>
+    {% empty %}
+        <div class="post-item">
+            <p>У цій категорії поки що немає статей.</p>
+        </div>
+    {% endfor %}
+    
+    {% if posts.has_other_pages %}
+        <div class="pagination">
+            {% if posts.has_previous %}
+                <a href="?page={{ posts.previous_page_number }}">&laquo; Попередня</a>
+            {% endif %}
+            
+            <span class="current">Сторінка {{ posts.number }} з {{ posts.paginator.num_pages }}</span>
+            
+            {% if posts.has_next %}
+                <a href="?page={{ posts.next_page_number }}">Наступна &raquo;</a>
+            {% endif %}
+        </div>
+    {% endif %}
+{% endblock %}

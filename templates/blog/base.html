@@ -1,0 +1,40 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Блог{% endblock %}</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <nav>
+            <div>
+                <a href="{% url 'post_list' %}">Головна</a>
+                <a href="{% url 'category_list' %}">Категорії</a>
+            </div>
+            <div>
+                {% if user.is_authenticated %}
+                    <span style="color: white; margin-right: 15px;">Вітаємо, {{ user.username }}!</span>
+                    <a href="{% url 'logout' %}">Вийти</a>
+                {% else %}
+                    <a href="{% url 'login' %}">Увійти</a>
+                {% endif %}
+            </div>
+        </nav>
+    </header>
+    
+    <div class="container">
+        {% block content %}
+        {% endblock %}
+    </div>
+    
+    <footer style="background: #283593; color: white; text-align: center; padding: 1rem 0; margin-top: 3rem;">
+        <div class="container">
+            <p>&copy; 2025 Блог на Django. Всі права захищені.</p>
+        </div>
+    </footer>
+</body>
+</html>
